@@ -103,6 +103,22 @@ func (c *Consumer) Source(genLine, genCol int) (source, name string, line, col i
 	return
 }
 
+func (c *Consumer) SourcesContent(source string) string {
+	index := -1
+	for i, filename := range c.smap.Sources {
+		if filename == source {
+			index = i
+			break
+		}
+	}
+
+	if index >= 0 && index < len(c.smap.SourcesContent) {
+		return c.smap.SourcesContent[index]
+	}
+
+	return ""
+}
+
 func (c *Consumer) absSource(source string) string {
 	if path.IsAbs(source) {
 		return source
@@ -154,12 +170,13 @@ func (c *Consumer) SourceName(genLine, genCol int, genName string) (name string,
 type fn func() (fn, error)
 
 type sourceMap struct {
-	Version    int           `json:"version"`
-	File       string        `json:"file"`
-	SourceRoot string        `json:"sourceRoot"`
-	Sources    []string      `json:"sources"`
-	Names      []interface{} `json:"names"`
-	Mappings   string        `json:"mappings"`
+	Version        int           `json:"version"`
+	File           string        `json:"file"`
+	SourceRoot     string        `json:"sourceRoot"`
+	Sources        []string      `json:"sources"`
+	SourcesContent []string      `json:"sourcesContent"`
+	Names          []interface{} `json:"names"`
+	Mappings       string        `json:"mappings"`
 }
 
 type mapping struct {
